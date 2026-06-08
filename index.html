@@ -23,7 +23,7 @@
     transition:background-color .4s, color .4s; font-family:'Antic',sans-serif; }
   section { scroll-margin-top:90px; }
 
-  /* 3D background (behind hero only; sections have solid bg that scrolls over it) */
+  /* 3D background (behind hero only) */
   #bg3d { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.55; }
 
   /* Header */
@@ -38,7 +38,7 @@
   .menu a { display:block; font-size:19px; font-weight:700; letter-spacing:-.4px; padding:7px 8px;
     color:var(--fg); transition:color .25s; text-decoration:none; }
   .menu a:hover, .menu a.active { color:var(--accent); }
-  .signature { font-size:38px; color:var(--fg); font-family:'Brush Script MT','Lucida Handwriting',cursive; user-select:none; }
+  .signature { font-size:38px; color:var(--fg); font-family:'Brush Script MT','Lucida Handwriting',cursive; user-select:none; text-decoration:none; }
   .toggle { position:relative; width:64px; height:32px; border-radius:999px; border:none; cursor:pointer;
     background:var(--toggle-track); transition:opacity .2s; }
   .toggle:hover { opacity:.8; }
@@ -67,7 +67,7 @@
   .scroll:hover { color:var(--fg); }
   @keyframes bob { 0%,100%{ transform:translateX(-50%) translateY(0);} 50%{ transform:translateX(-50%) translateY(6px);} }
 
-  /* Content sections (opaque so they cover the 3D as you scroll) */
+  /* Content sections */
   .panel { position:relative; z-index:10; background:var(--bg); }
   .wrap { max-width:1080px; margin:0 auto; padding:96px 24px; }
   .sec-head { display:flex; align-items:center; gap:14px; margin-bottom:42px; }
@@ -89,20 +89,41 @@
   .stat .lbl { font-size:13px; color:var(--muted); margin-top:4px; }
   @media (max-width:760px){ .about{ grid-template-columns:1fr; gap:28px; } }
 
-  /* Projects */
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  .proj { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:26px; display:flex; flex-direction:column; transition:transform .2s, border-color .2s; }
-  .proj:hover { transform:translateY(-4px); border-color:var(--accent); }
-  .proj .badge { align-self:flex-start; font-size:12px; font-weight:700; color:var(--accent);
-    border:1px solid var(--accent); border-radius:20px; padding:3px 11px; letter-spacing:.5px; }
-  .proj h3 { font-family:'Fira Code',monospace; font-size:20px; margin:14px 0 8px; }
-  .proj p { color:var(--muted); font-size:15px; flex:1; line-height:1.6; }
-  .proj .stack { display:flex; flex-wrap:wrap; gap:7px; margin:16px 0 14px; }
-  .tag { font-size:12.5px; background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:4px 11px; color:var(--muted); }
-  html.light .tag { background:#f0f0f0; }
-  .proj .links a { color:var(--accent); font-weight:700; font-size:14px; text-decoration:none; }
-  .proj .links a:hover { text-decoration:underline; }
-  @media (max-width:760px){ .grid2{ grid-template-columns:1fr; } }
+  /* ===== Radial Scroll Gallery (Work) ===== */
+  #projects { padding-top:96px; }
+  .gallery-intro { text-align:center; margin-bottom:8px; }
+  .gallery-intro .num { font-family:'Fira Code',monospace; color:var(--accent); font-size:14px; font-weight:700; letter-spacing:2px; }
+  .gallery-intro h2 { font-family:'Fira Code',monospace; font-size:clamp(34px,7vw,64px); font-weight:700; letter-spacing:-1px; margin-top:6px; }
+  .gallery-intro .hint { color:var(--muted); font-size:13px; margin-top:10px; animation:bob 2s ease-in-out infinite; }
+  .gallery-pin { position:relative; min-height:100vh; width:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .gallery-mask { position:relative; width:100%; overflow:hidden;
+    -webkit-mask-image:linear-gradient(to top, transparent 0%, black 40%, black 100%);
+    mask-image:linear-gradient(to top, transparent 0%, black 40%, black 100%); }
+  .wheel { position:absolute; left:50%; transform:translateX(-50%); margin:0; padding:0; list-style:none; will-change:transform; }
+  .wheel-item { position:absolute; top:50%; left:50%; }
+  .card { width:200px; height:280px; position:relative; overflow:hidden; border-radius:14px; background:var(--card);
+    border:1px solid var(--border); box-shadow:0 14px 40px rgba(0,0,0,.45); cursor:pointer; outline:none;
+    transition:transform .5s ease-out, filter .5s ease-out, opacity .5s ease-out; will-change:transform; }
+  @media (min-width:768px){ .card{ width:240px; height:320px; } }
+  .card img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    transition:transform .7s ease-out, filter .7s ease-out; transform:scale(1); filter:blur(1px) grayscale(30%); }
+  .card .shade { position:absolute; inset:0; background:linear-gradient(to top, var(--bg) 0%, transparent 70%); opacity:.65; }
+  .card .top { position:absolute; top:14px; left:14px; right:14px; display:flex; justify-content:space-between; align-items:flex-start; z-index:2; }
+  .card .badge2 { font-size:10px; font-weight:700; padding:3px 9px; border-radius:999px; background:color-mix(in srgb,var(--bg) 80%, transparent);
+    backdrop-filter:blur(6px); color:var(--fg); border:1px solid var(--border); }
+  .card .arrow { width:26px; height:26px; border-radius:999px; background:var(--accent); color:#15150a; display:flex; align-items:center; justify-content:center;
+    opacity:0; transform:rotate(-45deg); transition:all .5s; }
+  .card .bottom { position:absolute; left:14px; right:14px; bottom:14px; z-index:2; transform:translateY(8px); transition:transform .5s; }
+  .card .bottom h3 { font-family:'Fira Code',monospace; font-size:20px; font-weight:700; line-height:1.1; }
+  .card .bottom .bar { height:2px; background:var(--accent); width:0; opacity:0; margin-top:8px; transition:all .5s; }
+  /* hover (focus) states driven by JS class on .wheel-item */
+  .wheel-item.hovered .card { transform:scale(1.18) translateY(-26px); }
+  .wheel-item.hovered .card img { transform:scale(1.1); filter:blur(0) grayscale(0); }
+  .wheel-item.hovered .card .arrow { opacity:1; transform:rotate(0); }
+  .wheel-item.hovered .card .bottom { transform:translateY(0); }
+  .wheel-item.hovered .card .bottom .bar { width:100%; opacity:1; }
+  .wheel.has-hover .wheel-item:not(.hovered) .card { filter:blur(2px) grayscale(1); opacity:.4; }
+  .card:focus-visible { box-shadow:0 0 0 3px var(--accent); }
 
   /* Experience timeline */
   .timeline { border-left:2px solid var(--border); padding-left:28px; display:flex; flex-direction:column; gap:30px; }
@@ -114,7 +135,7 @@
 
   /* Education */
   .edu { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  .edu .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; }
+  .edu .card2 { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; }
   .edu h3 { font-family:'Fira Code',monospace; font-size:18px; margin-bottom:6px; }
   .edu .meta { color:var(--accent); font-size:13px; margin-bottom:10px; }
   .edu p { color:var(--muted); font-size:15px; }
@@ -149,7 +170,7 @@
       <div class="menu" id="menu" style="display:none">
         <a href="#home" class="active">HOME</a>
         <a href="#about">ABOUT</a>
-        <a href="#projects">PROJECTS</a>
+        <a href="#projects">WORK</a>
         <a href="#experience">EXPERIENCE</a>
         <a href="#education">EDUCATION</a>
         <a href="#contact">CONTACT</a>
@@ -198,39 +219,16 @@
     </div>
   </section>
 
-  <!-- PROJECTS -->
+  <!-- WORK — Radial Scroll Gallery -->
   <section id="projects" class="panel">
-    <div class="wrap">
-      <div class="sec-head reveal"><span class="num">02</span><h2>Projects</h2><div class="rule"></div></div>
-      <div class="grid2">
-        <div class="proj reveal">
-          <span class="badge">AI · WEB</span>
-          <h3>Image Color Analyzer</h3>
-          <p>Upload an image and Claude's vision model identifies the dominant colors — names, hex codes, and coverage — rendered as live swatches. Flask backend, browser front-end, API key kept server-side.</p>
-          <div class="stack"><span class="tag">Python</span><span class="tag">Flask</span><span class="tag">Claude API</span><span class="tag">JavaScript</span></div>
-          <div class="links"><a href="https://github.com/maani1pk/color-analyzer" target="_blank" rel="noopener">View on GitHub →</a></div>
-        </div>
-        <div class="proj reveal">
-          <span class="badge">UNITY · C#</span>
-          <h3>Unity Game Project</h3>
-          <p>A gameplay project built in Unity 3D showcasing mechanics, systems, and C# architecture. <em>Replace with your real game — add a title, short description, and a build or video link.</em></p>
-          <div class="stack"><span class="tag">Unity</span><span class="tag">C#</span><span class="tag">Gameplay</span></div>
-          <div class="links"><a href="#" target="_blank" rel="noopener">Add link →</a></div>
-        </div>
-        <div class="proj reveal">
-          <span class="badge">UNITY · C#</span>
-          <h3>Prototype / Game Jam</h3>
-          <p>A second project slot — a prototype, jam entry, or editor tool you built. Keep it short and link to a video, itch.io page, or repo.</p>
-          <div class="stack"><span class="tag">Unity</span><span class="tag">C#</span></div>
-          <div class="links"><a href="#" target="_blank" rel="noopener">Add link →</a></div>
-        </div>
-        <div class="proj reveal">
-          <span class="badge">LEARNING</span>
-          <h3>Python &amp; AI Experiments</h3>
-          <p>A growing set of scripts and dashboards exploring Python fundamentals and the Claude API — from "hello world" to vision and structured outputs.</p>
-          <div class="stack"><span class="tag">Python</span><span class="tag">Claude API</span></div>
-          <div class="links"><a href="https://github.com/maani1pk" target="_blank" rel="noopener">GitHub profile →</a></div>
-        </div>
+    <div class="gallery-intro reveal">
+      <span class="num">02 — PORTFOLIO</span>
+      <h2>Work</h2>
+      <div class="hint">↓ scroll to spin the wheel</div>
+    </div>
+    <div class="gallery-pin" id="galleryPin">
+      <div class="gallery-mask" id="galleryMask">
+        <ul class="wheel" id="wheel"></ul>
       </div>
     </div>
   </section>
@@ -264,12 +262,12 @@
     <div class="wrap">
       <div class="sec-head reveal"><span class="num">04</span><h2>Education</h2><div class="rule"></div></div>
       <div class="edu">
-        <div class="card reveal">
+        <div class="card2 reveal">
           <h3>Your Degree</h3>
           <div class="meta">University Name — 20XX – 20XX</div>
           <p>Replace with your degree, field, and institution. Add honors or relevant coursework if you like.</p>
         </div>
-        <div class="card reveal">
+        <div class="card2 reveal">
           <h3>Certifications &amp; Courses</h3>
           <div class="meta">Ongoing</div>
           <p>List Unity certifications, online courses, or training. Add or remove this card as needed.</p>
@@ -299,6 +297,8 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
   /* ---------- Blur-in text ---------- */
   document.querySelectorAll('.blur-wrap').forEach(wrap => {
@@ -348,16 +348,99 @@
     document.documentElement.classList.toggle('light');
   });
 
-  /* ---------- Scrollspy (active menu link) ---------- */
+  /* ---------- Scrollspy ---------- */
   const navLinks = [...menu.querySelectorAll('a')];
   const spyObs = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
-      }
+      if (e.isIntersecting) navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
   document.querySelectorAll('main section').forEach(s => spyObs.observe(s));
+
+  /* ---------- Radial scroll gallery (GSAP) ---------- */
+  (function () {
+    const projects = [
+      { title: 'Color Analyzer', cat: 'AI · WEB', img: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&w=500&q=80', url: 'https://github.com/maani1pk/color-analyzer' },
+      { title: 'Stellar Drift',  cat: 'UNITY',    img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80', url: '#' },
+      { title: 'Gameplay Sys',   cat: 'UNITY',    img: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=500&q=80', url: '#' },
+      { title: 'Editor Tools',   cat: 'TOOLS',    img: 'https://images.unsplash.com/photo-1468581264429-2548ef9eb732?auto=format&fit=crop&w=500&q=80', url: '#' },
+      { title: 'AI Experiments', cat: 'PYTHON',   img: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?auto=format&fit=crop&w=500&q=80', url: 'https://github.com/maani1pk' },
+      { title: 'Prototype 07',   cat: 'GAME JAM', img: 'https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?auto=format&fit=crop&w=500&q=80', url: '#' },
+    ];
+
+    const wheel = document.getElementById('wheel');
+    const mask = document.getElementById('galleryMask');
+    const pin = document.getElementById('galleryPin');
+    const ARROW = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
+
+    // Build cards
+    projects.forEach((p, i) => {
+      const li = document.createElement('li');
+      li.className = 'wheel-item';
+      li.innerHTML =
+        '<a class="card" href="' + p.url + '"' + (p.url !== '#' ? ' target="_blank" rel="noopener"' : '') + ' style="display:block;text-decoration:none;color:inherit">' +
+          '<img src="' + p.img + '" alt="' + p.title + '" loading="lazy">' +
+          '<div class="shade"></div>' +
+          '<div class="top"><span class="badge2">' + p.cat + '</span><span class="arrow">' + ARROW + '</span></div>' +
+          '<div class="bottom"><h3>' + p.title + '</h3><div class="bar"></div></div>' +
+        '</a>';
+      wheel.appendChild(li);
+    });
+
+    const items = [...wheel.children];
+    const count = items.length;
+    let radius;
+
+    function layout() {
+      radius = window.innerWidth < 768 ? 250 : 420;
+      const diameter = radius * 2;
+      const visible = 0.5, hidden = 0.5;
+      const cardH = window.innerWidth < 768 ? 280 : 320;
+      wheel.style.width = diameter + 'px';
+      wheel.style.height = diameter + 'px';
+      wheel.style.bottom = -(diameter * hidden) + 'px';
+      mask.style.height = (diameter * visible + cardH / 2 + 120) + 'px';
+      items.forEach((li, i) => {
+        const angle = (i / count) * 2 * Math.PI;
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
+        const deg = (angle * 180) / Math.PI + 90;
+        li.style.transform = 'translate(-50%,-50%) translate3d(' + x + 'px,' + y + 'px,0) rotate(' + deg + 'deg)';
+      });
+    }
+    layout();
+
+    // Hover focus/blur
+    items.forEach(li => {
+      const enter = () => { li.classList.add('hovered'); wheel.classList.add('has-hover'); };
+      const leave = () => { li.classList.remove('hovered'); wheel.classList.remove('has-hover'); };
+      li.addEventListener('mouseenter', enter);
+      li.addEventListener('mouseleave', leave);
+      li.querySelector('.card').addEventListener('focus', enter);
+      li.querySelector('.card').addEventListener('blur', leave);
+    });
+
+    // GSAP scroll animation
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !reduce) {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.fromTo(items,
+        { scale: 0, autoAlpha: 0 },
+        { scale: 1, autoAlpha: 1, duration: 1.2, ease: 'back.out(1.2)', stagger: 0.06,
+          scrollTrigger: { trigger: pin, start: 'top 80%', toggleActions: 'play none none reverse' } }
+      );
+      gsap.to(wheel, {
+        rotation: 360, ease: 'none',
+        scrollTrigger: { trigger: pin, pin: true, start: 'center center', end: '+=2200', scrub: 1, invalidateOnRefresh: true }
+      });
+      let t;
+      window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { layout(); ScrollTrigger.refresh(); }, 120); });
+    } else {
+      // Reduced motion / no GSAP: show cards statically
+      gsap && gsap.set ? gsap.set(items, { autoAlpha: 1 }) : items.forEach(li => li.style.opacity = 1);
+      window.addEventListener('resize', () => { clearTimeout(window.__t); window.__t = setTimeout(layout, 120); });
+    }
+  })();
 
   /* ---------- 3D background ---------- */
   (function () {
@@ -370,31 +453,21 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
     mount.appendChild(renderer.domElement);
-
     const LIME = 0xC3E41D;
-    const wire = new THREE.LineSegments(
-      new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(2.6, 1)),
-      new THREE.LineBasicMaterial({ color: LIME, transparent: true, opacity: 0.6 })
-    );
+    const wire = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(2.6, 1)),
+      new THREE.LineBasicMaterial({ color: LIME, transparent: true, opacity: 0.6 }));
     scene.add(wire);
-    const inner = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1.4, 0),
-      new THREE.MeshBasicMaterial({ color: LIME, wireframe: true, transparent: true, opacity: 0.25 })
-    );
+    const inner = new THREE.Mesh(new THREE.IcosahedronGeometry(1.4, 0),
+      new THREE.MeshBasicMaterial({ color: LIME, wireframe: true, transparent: true, opacity: 0.25 }));
     scene.add(inner);
-    const COUNT = 450;
-    const positions = new Float32Array(COUNT * 3);
+    const COUNT = 450, positions = new Float32Array(COUNT * 3);
     for (let i = 0; i < COUNT * 3; i++) positions[i] = (Math.random() - 0.5) * 22;
     const pGeo = new THREE.BufferGeometry();
     pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const points = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: LIME, size: 0.035, transparent: true, opacity: 0.5 }));
     scene.add(points);
-
     let mx = 0, my = 0;
-    window.addEventListener('mousemove', e => {
-      mx = (e.clientX / window.innerWidth - 0.5) * 2;
-      my = (e.clientY / window.innerHeight - 0.5) * 2;
-    });
+    window.addEventListener('mousemove', e => { mx = (e.clientX / window.innerWidth - 0.5) * 2; my = (e.clientY / window.innerHeight - 0.5) * 2; });
     function animate() {
       requestAnimationFrame(animate);
       wire.rotation.x += 0.0018; wire.rotation.y += 0.0026;
@@ -407,8 +480,7 @@
     }
     animate();
     window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
+      camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
   })();
