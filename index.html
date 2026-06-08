@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abdur Rehman Arshad — Game Developer</title>
+<meta name="description" content="Abdur Rehman Arshad — Unity & C# game developer with 6 years of experience, now building with Python and AI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0e1013; --bg-2:#15181d; --card:#181c22; --border:#262b33;
+    --text:#eef1f5; --muted:#9aa4b2; --accent:#ff7a3c; --accent-2:#ffb347;
+    --green:#3fb950; --blue:#58a6ff;
+    --display:'Space Grotesk',sans-serif; --body:'Inter',system-ui,sans-serif;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { font-family:var(--body); background:var(--bg); color:var(--text); line-height:1.65; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 24px; }
+
+  /* NAV */
+  nav { position:sticky; top:0; z-index:50; backdrop-filter:blur(12px); background:rgba(14,16,19,0.78); border-bottom:1px solid var(--border); }
+  nav .inner { display:flex; align-items:center; justify-content:space-between; height:64px; }
+  nav .logo { font-family:var(--display); font-weight:700; font-size:18px; letter-spacing:-0.3px; }
+  nav .logo span { color:var(--accent); }
+  nav .links { display:flex; gap:28px; font-size:14px; font-weight:500; }
+  nav .links a { color:var(--muted); transition:.15s; }
+  nav .links a:hover { color:var(--text); }
+  @media (max-width:640px){ nav .links{ display:none; } }
+
+  /* HERO */
+  .hero { padding:110px 0 90px; position:relative; overflow:hidden; }
+  .hero::before { content:""; position:absolute; top:-120px; right:-120px; width:420px; height:420px;
+    background:radial-gradient(circle, rgba(255,122,60,0.18), transparent 70%); filter:blur(20px); }
+  .hero .tag { display:inline-block; font-size:13px; font-weight:600; color:var(--accent); background:rgba(255,122,60,0.1);
+    border:1px solid rgba(255,122,60,0.3); padding:5px 14px; border-radius:30px; margin-bottom:22px; }
+  .hero h1 { font-family:var(--display); font-size:clamp(38px,6vw,64px); font-weight:700; line-height:1.05; letter-spacing:-1.5px; }
+  .hero h1 em { font-style:normal; color:var(--accent); }
+  .hero p { color:var(--muted); font-size:clamp(16px,2.2vw,20px); max-width:620px; margin-top:22px; }
+  .hero .cta { margin-top:36px; display:flex; gap:14px; flex-wrap:wrap; }
+  .btn { font-weight:600; font-size:15px; padding:13px 26px; border-radius:10px; transition:.18s; display:inline-flex; align-items:center; gap:8px; }
+  .btn.primary { background:var(--accent); color:#1a0e07; }
+  .btn.primary:hover { background:var(--accent-2); transform:translateY(-2px); }
+  .btn.ghost { border:1px solid var(--border); color:var(--text); }
+  .btn.ghost:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* SECTION */
+  section { padding:72px 0; }
+  .section-head { display:flex; align-items:center; gap:14px; margin-bottom:38px; }
+  .section-head .num { font-family:var(--display); color:var(--accent); font-size:15px; font-weight:600; }
+  .section-head h2 { font-family:var(--display); font-size:30px; font-weight:700; letter-spacing:-0.5px; }
+  .section-head .rule { flex:1; height:1px; background:var(--border); }
+
+  /* ABOUT */
+  .about { display:grid; grid-template-columns:1.6fr 1fr; gap:48px; align-items:start; }
+  .about p { color:var(--muted); margin-bottom:16px; font-size:16px; }
+  .about p strong { color:var(--text); }
+  .facts { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px; }
+  .facts .row { display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:14px; }
+  .facts .row:last-child { border-bottom:none; }
+  .facts .row span:first-child { color:var(--muted); }
+  .facts .row span:last-child { font-weight:600; }
+  @media (max-width:760px){ .about{ grid-template-columns:1fr; gap:28px; } }
+
+  /* SKILLS */
+  .skills { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .skill { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; transition:.18s; }
+  .skill:hover { border-color:var(--accent); transform:translateY(-3px); }
+  .skill .ic { font-size:26px; }
+  .skill h3 { font-family:var(--display); font-size:17px; margin:12px 0 10px; }
+  .skill .pills { display:flex; flex-wrap:wrap; gap:7px; }
+  .pill { font-size:12.5px; background:var(--bg-2); border:1px solid var(--border); border-radius:20px; padding:4px 11px; color:var(--muted); }
+  @media (max-width:760px){ .skills{ grid-template-columns:1fr; } }
+
+  /* PROJECTS */
+  .projects { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
+  .proj { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:26px; display:flex; flex-direction:column; transition:.18s; }
+  .proj:hover { border-color:var(--accent); transform:translateY(-3px); }
+  .proj .badge { font-size:12px; font-weight:600; color:var(--green); background:rgba(63,185,80,0.12); border:1px solid rgba(63,185,80,0.3); padding:3px 11px; border-radius:20px; align-self:flex-start; }
+  .proj h3 { font-family:var(--display); font-size:21px; margin:14px 0 8px; }
+  .proj p { color:var(--muted); font-size:14.5px; flex:1; }
+  .proj .stack { display:flex; flex-wrap:wrap; gap:7px; margin:16px 0 14px; }
+  .proj .links { display:flex; gap:16px; font-size:14px; font-weight:600; }
+  .proj .links a { color:var(--accent); }
+  .proj .links a:hover { text-decoration:underline; }
+  @media (max-width:760px){ .projects{ grid-template-columns:1fr; } }
+
+  /* CONTACT */
+  .contact { text-align:center; background:var(--card); border:1px solid var(--border); border-radius:20px; padding:56px 28px; }
+  .contact h2 { font-family:var(--display); font-size:32px; letter-spacing:-0.5px; }
+  .contact p { color:var(--muted); margin:14px auto 28px; max-width:480px; }
+  .contact .row { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+
+  footer { text-align:center; padding:40px 0; color:var(--muted); font-size:13px; border-top:1px solid var(--border); }
+  footer a { color:var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap inner">
+    <div class="logo">Abdur<span>.</span></div>
+    <div class="links">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="tag">Available for opportunities</span>
+    <h1>Hi, I'm Abdur Rehman —<br>I build <em>games</em> &amp; interactive experiences.</h1>
+    <p>Game developer with 6 years crafting gameplay in <strong>C# and Unity 3D</strong>. Now expanding into <strong>Python and AI</strong>, building tools and web apps that connect engines to intelligence.</p>
+    <div class="cta">
+      <a class="btn primary" href="#projects">View my work →</a>
+      <a class="btn ghost" href="#contact">Get in touch</a>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head"><span class="num">01</span><h2>About</h2><div class="rule"></div></div>
+    <div class="about">
+      <div>
+        <p>I'm a <strong>game developer</strong> who has spent the last six years shipping gameplay systems, mechanics, and tools in <strong>Unity 3D</strong> with C#. I care about clean architecture, responsive feel, and code that other developers enjoy working with.</p>
+        <p>Recently I've been branching out beyond the engine — learning <strong>Python</strong> and building with the <strong>Claude AI API</strong> to create things like image-analysis web apps and developer tooling. I like connecting the worlds of real-time game code and modern AI services.</p>
+        <p>When I'm not in the editor, I'm exploring how AI can speed up content pipelines, automate the boring parts, and power smarter game backends.</p>
+      </div>
+      <div class="facts">
+        <div class="row"><span>Experience</span><span>6 Years</span></div>
+        <div class="row"><span>Focus</span><span>Unity / C#</span></div>
+        <div class="row"><span>Learning</span><span>Python · AI</span></div>
+        <div class="row"><span>Location</span><span>Pakistan</span></div>
+        <div class="row"><span>Status</span><span>Open to work</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills" style="background:var(--bg-2);">
+  <div class="wrap">
+    <div class="section-head"><span class="num">02</span><h2>Skills</h2><div class="rule"></div></div>
+    <div class="skills">
+      <div class="skill">
+        <div class="ic">🎮</div>
+        <h3>Game Development</h3>
+        <div class="pills">
+          <span class="pill">Unity 3D</span><span class="pill">C#</span><span class="pill">Gameplay Systems</span>
+          <span class="pill">Physics</span><span class="pill">UI / UX</span><span class="pill">Prefabs</span>
+          <span class="pill">Animation</span><span class="pill">Optimization</span>
+        </div>
+      </div>
+      <div class="skill">
+        <div class="ic">🧠</div>
+        <h3>Programming &amp; AI</h3>
+        <div class="pills">
+          <span class="pill">Python</span><span class="pill">OOP</span><span class="pill">Claude API</span>
+          <span class="pill">REST APIs</span><span class="pill">JSON</span><span class="pill">Problem Solving</span>
+        </div>
+      </div>
+      <div class="skill">
+        <div class="ic">🌐</div>
+        <h3>Web &amp; Tools</h3>
+        <div class="pills">
+          <span class="pill">Flask</span><span class="pill">HTML / CSS</span><span class="pill">JavaScript</span>
+          <span class="pill">Git &amp; GitHub</span><span class="pill">Visual Studio</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head"><span class="num">03</span><h2>Projects</h2><div class="rule"></div></div>
+    <div class="projects">
+      <div class="proj">
+        <span class="badge">AI · Web</span>
+        <h3>Image Color Analyzer</h3>
+        <p>A web app where you upload an image and Claude's vision model identifies the dominant colors — names, hex codes, and coverage — rendered as live swatches. Flask backend, browser front-end, API key kept server-side.</p>
+        <div class="stack">
+          <span class="pill">Python</span><span class="pill">Flask</span><span class="pill">Claude API</span><span class="pill">JavaScript</span>
+        </div>
+        <div class="links"><a href="https://github.com/maani1pk/color-analyzer" target="_blank">GitHub →</a></div>
+      </div>
+      <div class="proj">
+        <span class="badge">Unity · C#</span>
+        <h3>Unity Game Project</h3>
+        <p>A gameplay project built in Unity 3D showcasing mechanics, systems, and C# architecture. <em>(Replace this with your real game — add a title, a short description, and screenshots or a build link.)</em></p>
+        <div class="stack">
+          <span class="pill">Unity</span><span class="pill">C#</span><span class="pill">Gameplay</span>
+        </div>
+        <div class="links"><a href="#" target="_blank">Add link →</a></div>
+      </div>
+      <div class="proj">
+        <span class="badge">Unity · C#</span>
+        <h3>Another Game / Prototype</h3>
+        <p><em>Placeholder — drop in a second project here. A prototype, a game jam entry, a tool you built in the editor. Keep each card short and link to a video, itch.io page, or repo.</em></p>
+        <div class="stack">
+          <span class="pill">Unity</span><span class="pill">C#</span>
+        </div>
+        <div class="links"><a href="#" target="_blank">Add link →</a></div>
+      </div>
+      <div class="proj">
+        <span class="badge">Learning</span>
+        <h3>Python &amp; AI Experiments</h3>
+        <p>A growing set of scripts and dashboards exploring Python fundamentals and the Claude API — from "hello world" to vision and structured outputs.</p>
+        <div class="stack">
+          <span class="pill">Python</span><span class="pill">Claude API</span>
+        </div>
+        <div class="links"><a href="https://github.com/maani1pk" target="_blank">GitHub →</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact">
+      <h2>Let's build something</h2>
+      <p>Open to game development roles, freelance projects, and collaborations. The fastest way to reach me is email.</p>
+      <div class="row">
+        <a class="btn primary" href="mailto:abdur.rehman1pk@gmail.com">✉️ Email me</a>
+        <a class="btn ghost" href="https://github.com/maani1pk" target="_blank">GitHub</a>
+        <a class="btn ghost" href="#" target="_blank">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Built by Abdur Rehman Arshad · Hosted on <a href="https://pages.github.com" target="_blank">GitHub Pages</a>
+  </div>
+</footer>
+
+</body>
+</html>
