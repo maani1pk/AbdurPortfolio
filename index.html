@@ -300,6 +300,10 @@
     let imgReady = false;
     heroImg.onload = () => { imgReady = true; };
     heroImg.src = 'quest.png';
+    const artImg = new Image();
+    let artReady = false;
+    artImg.onload = () => { artReady = true; };
+    artImg.src = 'vr-art.png';
     const mouse = { x: 0, y: 0, active: false };
 
     function randomPos(x, y, mag) {
@@ -469,6 +473,65 @@
       for (let i = pi; i < particles.length; i++) particles[i].kill();
     }
 
+    function nextArt() {
+      if (!artReady) return;
+      const off = document.createElement('canvas');
+      off.width = W; off.height = H;
+      const octx = off.getContext('2d');
+      const areaTop = H * 0.05, areaH = H * 0.60;
+      const scale = Math.min((W * 0.46) / artImg.naturalWidth, areaH / artImg.naturalHeight);
+      const iw = artImg.naturalWidth * scale, ih = artImg.naturalHeight * scale;
+      octx.drawImage(artImg, (W - iw) / 2, areaTop, iw, ih);
+      // caption rendered in dark so the (line-art) dark-pixel extraction picks it up too
+      octx.fillStyle = 'black';
+      octx.textAlign = 'center';
+      octx.textBaseline = 'middle';
+      let fs = Math.floor(H * 0.12);
+      octx.font = 'bold ' + fs + 'px Arial';
+      const cap = 'VR experiences';
+      while (octx.measureText(cap).width > W * 0.72 && fs > 16) { fs -= 2; octx.font = 'bold ' + fs + 'px Arial'; }
+      octx.fillText(cap, W / 2, Math.min(areaTop + ih + H * 0.13, H - fs * 0.7));
+      const pixels = octx.getImageData(0, 0, W, H).data;
+      const col = { r: 232, g: 240, b: 246 };
+      pixelSteps = Math.max(5, Math.round(Math.sqrt(W * H) / 130));
+      ptSize = 2;
+      const coords = [];
+      for (let i = 0; i < pixels.length; i += pixelSteps * 4) coords.push(i);
+      for (let i = coords.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [coords[i], coords[j]] = [coords[j], coords[i]]; }
+      let pi = 0;
+      for (const idx of coords) {
+        const a = pixels[idx + 3];
+        const bright = (pixels[idx] + pixels[idx + 1] + pixels[idx + 2]) / 3;
+        if (a > 60 && bright < 200) {
+          const x = (idx / 4) % W, y = Math.floor(idx / 4 / W);
+          let p;
+          if (pi < particles.length) { p = particles[pi]; p.isKilled = false; pi++; }
+          else {
+            p = new Particle();
+            const rp = randomPos(W / 2, H / 2, (W + H) / 2);
+            p.pos.x = rp.x; p.pos.y = rp.y;
+            p.maxSpeed = Math.random() * 6 + 4; p.maxForce = p.maxSpeed * 0.05;
+            p.size = Math.random() * 6 + 6; p.colorBlendRate = Math.random() * 0.0275 + 0.0025;
+            particles.push(p);
+          }
+          p.startColor = {
+            r: p.startColor.r + (p.targetColor.r - p.startColor.r) * p.colorWeight,
+            g: p.startColor.g + (p.targetColor.g - p.startColor.g) * p.colorWeight,
+            b: p.startColor.b + (p.targetColor.b - p.startColor.b) * p.colorWeight,
+          };
+          p.targetColor = col; p.colorWeight = 0;
+          p.target.x = x; p.target.y = y;
+        }
+      }
+      for (let i = pi; i < particles.length; i++) particles[i].kill();
+    }
+
+    function showFrame(i) {
+      if (i < words.length) nextWord(words[i]);
+      else if (i === words.length && imgReady) nextImage();
+      else nextArt();
+    }
+
     function animate() {
       ctx.fillStyle = 'rgba(0,0,0,0.1)';
       ctx.fillRect(0, 0, W, H);
@@ -502,9 +565,9 @@
         }
         if (live > 0 && settled / live > 0.85) { aligned = true; holdStart = frameCount; }
       } else if (frameCount - holdStart >= 120) {
-        const total = words.length + (imgReady ? 1 : 0);
+        const total = words.length + (imgReady ? 1 : 0) + (artReady ? 1 : 0);
         wordIndex = (wordIndex + 1) % total;
-        if (wordIndex < words.length) nextWord(words[wordIndex]); else nextImage();
+        showFrame(wordIndex);
         aligned = false;
       }
       requestAnimationFrame(animate);
@@ -545,7 +608,7 @@
     let rt;
     window.addEventListener('resize', () => {
       clearTimeout(rt);
-      rt = setTimeout(() => { resize(); if (wordIndex < words.length) nextWord(words[wordIndex]); else nextImage(); aligned = false; }, 150);
+      rt = setTimeout(() => { resize(); showFrame(wordIndex); aligned = false; }, 150);
     });
   })();
 
