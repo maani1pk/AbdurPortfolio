@@ -23,9 +23,6 @@
     transition:background-color .4s, color .4s; font-family:'Antic',sans-serif; }
   section { scroll-margin-top:90px; }
 
-  /* 3D background (behind hero only) */
-  #bg3d { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.55; }
-
   /* Header */
   header { position:fixed; top:0; left:0; right:0; z-index:60; padding:20px 24px;
     backdrop-filter:blur(10px); background:color-mix(in srgb, var(--bg) 70%, transparent); }
@@ -46,25 +43,17 @@
     background:var(--fg); transition:transform .3s; transform:translateX(2rem); }
   html.light .toggle .knob { transform:translateX(0); }
 
-  /* Hero */
-  #home { position:relative; z-index:10; min-height:100vh; }
-  .center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100%; padding:0 16px; text-align:center; }
-  .name { font-family:'Fira Code',monospace; font-weight:700; color:var(--accent);
-    font-size:clamp(88px,15vw,210px); line-height:.78; letter-spacing:-.05em; text-transform:uppercase; white-space:nowrap; }
-  .blur-wrap { display:inline-flex; flex-wrap:wrap; justify-content:center; }
-  .blur-seg { display:inline-block; opacity:0; filter:blur(10px); transform:translateY(-20px); transition:all .5s ease-out; }
-  .blur-seg.in { opacity:1; filter:blur(0); transform:translateY(0); }
-  .pfp { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:20; }
-  .pfp .ring { width:clamp(65px,9vw,129px); height:clamp(110px,15vw,218px); border-radius:999px; overflow:hidden;
-    box-shadow:0 20px 50px rgba(0,0,0,.6); transition:transform .3s; cursor:pointer; }
-  .pfp .ring:hover { transform:scale(1.1); }
-  .pfp img { width:100%; height:100%; object-fit:cover; display:block; }
-  .tagline { position:absolute; bottom:15vh; left:50%; transform:translateX(-50%); width:100%; padding:0 24px; display:flex; justify-content:center; }
-  .tagline .blur-wrap { font-size:clamp(15px,2vw,22px); color:var(--muted); transition:color .3s; text-align:center; }
-  .tagline:hover .blur-wrap { color:var(--fg); }
-  .scroll { position:absolute; bottom:24px; left:50%; transform:translateX(-50%); background:none; border:none;
-    cursor:pointer; color:var(--muted); transition:color .3s; animation:bob 2s ease-in-out infinite; text-decoration:none; }
-  .scroll:hover { color:var(--fg); }
+  /* ===== Particle Text Hero ===== */
+  #home { position:relative; z-index:10; min-height:100vh; background:#000;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:80px 16px 60px; }
+  #particles { display:block; width:min(1000px, 94vw); height:auto; aspect-ratio:1000 / 500;
+    border:1px solid #1a1a1a; border-radius:14px; box-shadow:0 24px 70px rgba(0,0,0,.6); touch-action:none; }
+  .hero-caption { text-align:center; color:#9aa4b2; }
+  .hero-caption .role { font-family:'Fira Code',monospace; font-size:clamp(13px,1.8vw,16px); letter-spacing:2px; color:var(--accent); text-transform:uppercase; }
+  .hero-caption .hint { font-size:12px; margin-top:6px; color:#5a5a5a; }
+  .scroll { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); background:none; border:none;
+    cursor:pointer; color:#777; transition:color .3s; animation:bob 2s ease-in-out infinite; text-decoration:none; }
+  .scroll:hover { color:#fff; }
   @keyframes bob { 0%,100%{ transform:translateX(-50%) translateY(0);} 50%{ transform:translateX(-50%) translateY(6px);} }
 
   /* Content sections */
@@ -116,7 +105,6 @@
   .card .bottom { position:absolute; left:14px; right:14px; bottom:14px; z-index:2; transform:translateY(8px); transition:transform .5s; }
   .card .bottom h3 { font-family:'Fira Code',monospace; font-size:20px; font-weight:700; line-height:1.1; }
   .card .bottom .bar { height:2px; background:var(--accent); width:0; opacity:0; margin-top:8px; transition:all .5s; }
-  /* hover (focus) states driven by JS class on .wheel-item */
   .wheel-item.hovered .card { transform:scale(1.18) translateY(-26px); }
   .wheel-item.hovered .card img { transform:scale(1.1); filter:blur(0) grayscale(0); }
   .wheel-item.hovered .card .arrow { opacity:1; transform:rotate(0); }
@@ -158,8 +146,6 @@
 </head>
 <body>
 
-<div id="bg3d"></div>
-
 <header>
   <nav>
     <div class="menu-wrap">
@@ -182,17 +168,12 @@
 </header>
 
 <main>
-  <!-- HERO -->
+  <!-- HERO — Particle Text Effect -->
   <section id="home">
-    <div class="center">
-      <div class="name"><span class="blur-wrap" data-text="ABDUR" data-by="letters"></span></div>
-      <div class="name"><span class="blur-wrap" data-text="ARSHAD" data-by="letters"></span></div>
-      <div class="pfp">
-        <div class="ring"><img src="https://i.postimg.cc/y8DnKLyK/albert-dera-ILip77-Sbm-OE-unsplash.jpg" alt="Profile"></div>
-      </div>
-    </div>
-    <div class="tagline">
-      <span class="blur-wrap" data-text="Building games & interactive experiences in code." data-by="words" data-delay="120"></span>
+    <canvas id="particles" width="1000" height="500" aria-label="Animated particle text spelling Abdur Arshad and roles"></canvas>
+    <div class="hero-caption">
+      <div class="role">Game Developer · Unity · C# · AI</div>
+      <div class="hint">Right-click + drag on the canvas to scatter the particles · words cycle automatically</div>
     </div>
     <a class="scroll" href="#about" aria-label="Scroll down">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -296,27 +277,157 @@
   Built by Abdur Rehman Arshad · Hosted on <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
-  /* ---------- Blur-in text ---------- */
-  document.querySelectorAll('.blur-wrap').forEach(wrap => {
-    const text = wrap.dataset.text;
-    const by = wrap.dataset.by || 'words';
-    const delay = parseInt(wrap.dataset.delay || '100', 10);
-    const segs = by === 'words' ? text.split(' ') : text.split('');
-    segs.forEach((seg, i) => {
-      const span = document.createElement('span');
-      span.className = 'blur-seg';
-      span.textContent = seg + (by === 'words' && i < segs.length - 1 ? ' ' : '');
-      span.style.transitionDelay = (i * delay) + 'ms';
-      wrap.appendChild(span);
-    });
-  });
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    document.querySelectorAll('.blur-seg').forEach(s => s.classList.add('in'));
-  }));
+  /* ============ Particle Text Effect (ported from React component) ============ */
+  (function () {
+    const canvas = document.getElementById('particles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const words = ['ABDUR', 'ARSHAD', 'GAME DEV', 'UNITY · C#', 'AI · PYTHON'];
+    const pixelSteps = 6;
+    const drawAsPoints = true;
+
+    let particles = [];
+    let frameCount = 0;
+    let wordIndex = 0;
+    const mouse = { x: 0, y: 0, isPressed: false, isRightClick: false };
+
+    function randomPos(x, y, mag) {
+      const rx = Math.random() * W, ry = Math.random() * H;
+      let dx = rx - x, dy = ry - y;
+      const m = Math.sqrt(dx * dx + dy * dy);
+      if (m > 0) { dx = (dx / m) * mag; dy = (dy / m) * mag; }
+      return { x: x + dx, y: y + dy };
+    }
+
+    function Particle() {
+      this.pos = { x: 0, y: 0 }; this.vel = { x: 0, y: 0 }; this.acc = { x: 0, y: 0 }; this.target = { x: 0, y: 0 };
+      this.closeEnough = 100; this.maxSpeed = 1; this.maxForce = 0.1; this.size = 10; this.isKilled = false;
+      this.startColor = { r: 0, g: 0, b: 0 }; this.targetColor = { r: 0, g: 0, b: 0 }; this.colorWeight = 0; this.colorBlendRate = 0.01;
+    }
+    Particle.prototype.move = function () {
+      let prox = 1;
+      const d = Math.sqrt((this.pos.x - this.target.x) ** 2 + (this.pos.y - this.target.y) ** 2);
+      if (d < this.closeEnough) prox = d / this.closeEnough;
+      let tx = this.target.x - this.pos.x, ty = this.target.y - this.pos.y;
+      const m = Math.sqrt(tx * tx + ty * ty);
+      if (m > 0) { tx = (tx / m) * this.maxSpeed * prox; ty = (ty / m) * this.maxSpeed * prox; }
+      let sx = tx - this.vel.x, sy = ty - this.vel.y;
+      const sm = Math.sqrt(sx * sx + sy * sy);
+      if (sm > 0) { sx = (sx / sm) * this.maxForce; sy = (sy / sm) * this.maxForce; }
+      this.acc.x += sx; this.acc.y += sy;
+      this.vel.x += this.acc.x; this.vel.y += this.acc.y;
+      this.pos.x += this.vel.x; this.pos.y += this.vel.y;
+      this.acc.x = 0; this.acc.y = 0;
+    };
+    Particle.prototype.draw = function () {
+      if (this.colorWeight < 1) this.colorWeight = Math.min(this.colorWeight + this.colorBlendRate, 1);
+      const c = {
+        r: Math.round(this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight),
+        g: Math.round(this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight),
+        b: Math.round(this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight),
+      };
+      ctx.fillStyle = 'rgb(' + c.r + ',' + c.g + ',' + c.b + ')';
+      if (drawAsPoints) {
+        ctx.fillRect(this.pos.x, this.pos.y, 2, 2);
+      } else {
+        ctx.beginPath(); ctx.arc(this.pos.x, this.pos.y, this.size / 2, 0, Math.PI * 2); ctx.fill();
+      }
+    };
+    Particle.prototype.kill = function () {
+      if (!this.isKilled) {
+        const r = randomPos(W / 2, H / 2, (W + H) / 2);
+        this.target.x = r.x; this.target.y = r.y;
+        this.startColor = {
+          r: this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight,
+          g: this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight,
+          b: this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight,
+        };
+        this.targetColor = { r: 0, g: 0, b: 0 }; this.colorWeight = 0; this.isKilled = true;
+      }
+    };
+
+    function nextWord(word) {
+      const off = document.createElement('canvas');
+      off.width = W; off.height = H;
+      const octx = off.getContext('2d');
+      octx.fillStyle = 'white';
+      octx.font = 'bold 100px Arial';
+      octx.textAlign = 'center';
+      octx.textBaseline = 'middle';
+      octx.fillText(word, W / 2, H / 2);
+      const pixels = octx.getImageData(0, 0, W, H).data;
+      const newColor = { r: Math.random() * 255, g: Math.random() * 255, b: Math.random() * 255 };
+
+      let pi = 0;
+      const coords = [];
+      for (let i = 0; i < pixels.length; i += pixelSteps * 4) coords.push(i);
+      for (let i = coords.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [coords[i], coords[j]] = [coords[j], coords[i]]; }
+
+      for (const idx of coords) {
+        if (pixels[idx + 3] > 0) {
+          const x = (idx / 4) % W;
+          const y = Math.floor(idx / 4 / W);
+          let p;
+          if (pi < particles.length) { p = particles[pi]; p.isKilled = false; pi++; }
+          else {
+            p = new Particle();
+            const rp = randomPos(W / 2, H / 2, (W + H) / 2);
+            p.pos.x = rp.x; p.pos.y = rp.y;
+            p.maxSpeed = Math.random() * 6 + 4;
+            p.maxForce = p.maxSpeed * 0.05;
+            p.size = Math.random() * 6 + 6;
+            p.colorBlendRate = Math.random() * 0.0275 + 0.0025;
+            particles.push(p);
+          }
+          p.startColor = {
+            r: p.startColor.r + (p.targetColor.r - p.startColor.r) * p.colorWeight,
+            g: p.startColor.g + (p.targetColor.g - p.startColor.g) * p.colorWeight,
+            b: p.startColor.b + (p.targetColor.b - p.startColor.b) * p.colorWeight,
+          };
+          p.targetColor = newColor; p.colorWeight = 0;
+          p.target.x = x; p.target.y = y;
+        }
+      }
+      for (let i = pi; i < particles.length; i++) particles[i].kill();
+    }
+
+    function animate() {
+      ctx.fillStyle = 'rgba(0,0,0,0.1)';
+      ctx.fillRect(0, 0, W, H);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.move(); p.draw();
+        if (p.isKilled && (p.pos.x < 0 || p.pos.x > W || p.pos.y < 0 || p.pos.y > H)) particles.splice(i, 1);
+      }
+      if (mouse.isPressed && mouse.isRightClick) {
+        particles.forEach(p => {
+          const d = Math.sqrt((p.pos.x - mouse.x) ** 2 + (p.pos.y - mouse.y) ** 2);
+          if (d < 50) p.kill();
+        });
+      }
+      frameCount++;
+      if (frameCount % 240 === 0) { wordIndex = (wordIndex + 1) % words.length; nextWord(words[wordIndex]); }
+      requestAnimationFrame(animate);
+    }
+
+    // Map CSS (displayed) coords to internal canvas coords for mouse
+    function toCanvas(e) {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = (e.clientX - rect.left) * (W / rect.width);
+      mouse.y = (e.clientY - rect.top) * (H / rect.height);
+    }
+    canvas.addEventListener('mousedown', e => { mouse.isPressed = true; mouse.isRightClick = e.button === 2; toCanvas(e); });
+    canvas.addEventListener('mouseup', () => { mouse.isPressed = false; mouse.isRightClick = false; });
+    canvas.addEventListener('mousemove', toCanvas);
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+    nextWord(words[0]);
+    animate();
+  })();
 
   /* ---------- Reveal on scroll ---------- */
   const revealObs = new IntersectionObserver((entries) => {
@@ -367,14 +478,11 @@
       { title: 'AI Experiments', cat: 'PYTHON',   img: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?auto=format&fit=crop&w=500&q=80', url: 'https://github.com/maani1pk' },
       { title: 'Prototype 07',   cat: 'GAME JAM', img: 'https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?auto=format&fit=crop&w=500&q=80', url: '#' },
     ];
-
     const wheel = document.getElementById('wheel');
     const mask = document.getElementById('galleryMask');
     const pin = document.getElementById('galleryPin');
     const ARROW = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
-
-    // Build cards
-    projects.forEach((p, i) => {
+    projects.forEach((p) => {
       const li = document.createElement('li');
       li.className = 'wheel-item';
       li.innerHTML =
@@ -386,31 +494,24 @@
         '</a>';
       wheel.appendChild(li);
     });
-
     const items = [...wheel.children];
     const count = items.length;
-    let radius;
-
     function layout() {
-      radius = window.innerWidth < 768 ? 250 : 420;
+      const radius = window.innerWidth < 768 ? 250 : 420;
       const diameter = radius * 2;
-      const visible = 0.5, hidden = 0.5;
       const cardH = window.innerWidth < 768 ? 280 : 320;
       wheel.style.width = diameter + 'px';
       wheel.style.height = diameter + 'px';
-      wheel.style.bottom = -(diameter * hidden) + 'px';
-      mask.style.height = (diameter * visible + cardH / 2 + 120) + 'px';
+      wheel.style.bottom = -(diameter * 0.5) + 'px';
+      mask.style.height = (diameter * 0.5 + cardH / 2 + 120) + 'px';
       items.forEach((li, i) => {
         const angle = (i / count) * 2 * Math.PI;
-        const x = radius * Math.cos(angle);
-        const y = radius * Math.sin(angle);
+        const x = radius * Math.cos(angle), y = radius * Math.sin(angle);
         const deg = (angle * 180) / Math.PI + 90;
         li.style.transform = 'translate(-50%,-50%) translate3d(' + x + 'px,' + y + 'px,0) rotate(' + deg + 'deg)';
       });
     }
     layout();
-
-    // Hover focus/blur
     items.forEach(li => {
       const enter = () => { li.classList.add('hovered'); wheel.classList.add('has-hover'); };
       const leave = () => { li.classList.remove('hovered'); wheel.classList.remove('has-hover'); };
@@ -419,70 +520,20 @@
       li.querySelector('.card').addEventListener('focus', enter);
       li.querySelector('.card').addEventListener('blur', leave);
     });
-
-    // GSAP scroll animation
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !reduce) {
       gsap.registerPlugin(ScrollTrigger);
-      gsap.fromTo(items,
-        { scale: 0, autoAlpha: 0 },
+      gsap.fromTo(items, { scale: 0, autoAlpha: 0 },
         { scale: 1, autoAlpha: 1, duration: 1.2, ease: 'back.out(1.2)', stagger: 0.06,
-          scrollTrigger: { trigger: pin, start: 'top 80%', toggleActions: 'play none none reverse' } }
-      );
-      gsap.to(wheel, {
-        rotation: 360, ease: 'none',
-        scrollTrigger: { trigger: pin, pin: true, start: 'center center', end: '+=2200', scrub: 1, invalidateOnRefresh: true }
-      });
+          scrollTrigger: { trigger: pin, start: 'top 80%', toggleActions: 'play none none reverse' } });
+      gsap.to(wheel, { rotation: 360, ease: 'none',
+        scrollTrigger: { trigger: pin, pin: true, start: 'center center', end: '+=2200', scrub: 1, invalidateOnRefresh: true } });
       let t;
       window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { layout(); ScrollTrigger.refresh(); }, 120); });
     } else {
-      // Reduced motion / no GSAP: show cards statically
-      gsap && gsap.set ? gsap.set(items, { autoAlpha: 1 }) : items.forEach(li => li.style.opacity = 1);
+      items.forEach(li => li.style.opacity = 1);
       window.addEventListener('resize', () => { clearTimeout(window.__t); window.__t = setTimeout(layout, 120); });
     }
-  })();
-
-  /* ---------- 3D background ---------- */
-  (function () {
-    if (typeof THREE === 'undefined') { console.error('three.js failed to load'); return; }
-    const mount = document.getElementById('bg3d');
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 7;
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    mount.appendChild(renderer.domElement);
-    const LIME = 0xC3E41D;
-    const wire = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(2.6, 1)),
-      new THREE.LineBasicMaterial({ color: LIME, transparent: true, opacity: 0.6 }));
-    scene.add(wire);
-    const inner = new THREE.Mesh(new THREE.IcosahedronGeometry(1.4, 0),
-      new THREE.MeshBasicMaterial({ color: LIME, wireframe: true, transparent: true, opacity: 0.25 }));
-    scene.add(inner);
-    const COUNT = 450, positions = new Float32Array(COUNT * 3);
-    for (let i = 0; i < COUNT * 3; i++) positions[i] = (Math.random() - 0.5) * 22;
-    const pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const points = new THREE.Points(pGeo, new THREE.PointsMaterial({ color: LIME, size: 0.035, transparent: true, opacity: 0.5 }));
-    scene.add(points);
-    let mx = 0, my = 0;
-    window.addEventListener('mousemove', e => { mx = (e.clientX / window.innerWidth - 0.5) * 2; my = (e.clientY / window.innerHeight - 0.5) * 2; });
-    function animate() {
-      requestAnimationFrame(animate);
-      wire.rotation.x += 0.0018; wire.rotation.y += 0.0026;
-      inner.rotation.x -= 0.003; inner.rotation.y -= 0.004;
-      points.rotation.y += 0.0006;
-      camera.position.x += (mx * 0.8 - camera.position.x) * 0.04;
-      camera.position.y += (-my * 0.8 - camera.position.y) * 0.04;
-      camera.lookAt(scene.position);
-      renderer.render(scene, camera);
-    }
-    animate();
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
   })();
 </script>
 </body>
