@@ -299,11 +299,10 @@
     const heroImg = new Image();
     let imgReady = false;
     heroImg.onload = () => { imgReady = true; };
-    heroImg.src = 'quest.png';
     const artImg = new Image();
     let artReady = false;
     artImg.onload = () => { artReady = true; };
-    artImg.src = 'vr-art.png';
+    // Image frames disabled — hero cycles through the text lines only.
     const mouse = { x: 0, y: 0, active: false };
 
     function randomPos(x, y, mag) {
