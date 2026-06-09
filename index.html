@@ -296,6 +296,10 @@
     let frameCount = 0;
     let wordIndex = 0;
     let aligned = false, holdStart = 0;
+    const heroImg = new Image();
+    let imgReady = false;
+    heroImg.onload = () => { imgReady = true; };
+    heroImg.src = 'quest.png';
     const mouse = { x: 0, y: 0, active: false };
 
     function randomPos(x, y, mag) {
@@ -420,6 +424,51 @@
       for (let i = pi; i < particles.length; i++) particles[i].kill();
     }
 
+    function nextImage() {
+      if (!imgReady) return;
+      const off = document.createElement('canvas');
+      off.width = W; off.height = H;
+      const octx = off.getContext('2d');
+      const scale = Math.min((W * 0.62) / heroImg.naturalWidth, (H * 0.62) / heroImg.naturalHeight);
+      const iw = heroImg.naturalWidth * scale, ih = heroImg.naturalHeight * scale;
+      octx.drawImage(heroImg, (W - iw) / 2, (H - ih) / 2, iw, ih);
+      const pixels = octx.getImageData(0, 0, W, H).data;
+      const transparentBg = pixels[3] < 10;
+      const col = { r: 232, g: 240, b: 246 };
+      pixelSteps = Math.max(12, Math.round(Math.sqrt(W * H) / 45));
+      ptSize = 3;
+      const coords = [];
+      for (let i = 0; i < pixels.length; i += pixelSteps * 4) coords.push(i);
+      for (let i = coords.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [coords[i], coords[j]] = [coords[j], coords[i]]; }
+      let pi = 0;
+      for (const idx of coords) {
+        const a = pixels[idx + 3];
+        const bright = (pixels[idx] + pixels[idx + 1] + pixels[idx + 2]) / 3;
+        const on = transparentBg ? (a > 60) : (a > 60 && bright < 232);
+        if (on) {
+          const x = (idx / 4) % W, y = Math.floor(idx / 4 / W);
+          let p;
+          if (pi < particles.length) { p = particles[pi]; p.isKilled = false; pi++; }
+          else {
+            p = new Particle();
+            const rp = randomPos(W / 2, H / 2, (W + H) / 2);
+            p.pos.x = rp.x; p.pos.y = rp.y;
+            p.maxSpeed = Math.random() * 6 + 4; p.maxForce = p.maxSpeed * 0.05;
+            p.size = Math.random() * 6 + 6; p.colorBlendRate = Math.random() * 0.0275 + 0.0025;
+            particles.push(p);
+          }
+          p.startColor = {
+            r: p.startColor.r + (p.targetColor.r - p.startColor.r) * p.colorWeight,
+            g: p.startColor.g + (p.targetColor.g - p.startColor.g) * p.colorWeight,
+            b: p.startColor.b + (p.targetColor.b - p.startColor.b) * p.colorWeight,
+          };
+          p.targetColor = col; p.colorWeight = 0;
+          p.target.x = x; p.target.y = y;
+        }
+      }
+      for (let i = pi; i < particles.length; i++) particles[i].kill();
+    }
+
     function animate() {
       ctx.fillStyle = 'rgba(0,0,0,0.1)';
       ctx.fillRect(0, 0, W, H);
@@ -453,8 +502,9 @@
         }
         if (live > 0 && settled / live > 0.85) { aligned = true; holdStart = frameCount; }
       } else if (frameCount - holdStart >= 120) {
-        wordIndex = (wordIndex + 1) % words.length;
-        nextWord(words[wordIndex]);
+        const total = words.length + (imgReady ? 1 : 0);
+        wordIndex = (wordIndex + 1) % total;
+        if (wordIndex < words.length) nextWord(words[wordIndex]); else nextImage();
         aligned = false;
       }
       requestAnimationFrame(animate);
@@ -495,7 +545,7 @@
     let rt;
     window.addEventListener('resize', () => {
       clearTimeout(rt);
-      rt = setTimeout(() => { resize(); nextWord(words[wordIndex]); aligned = false; }, 150);
+      rt = setTimeout(() => { resize(); if (wordIndex < words.length) nextWord(words[wordIndex]); else nextImage(); aligned = false; }, 150);
     });
   })();
 
