@@ -43,16 +43,14 @@
     background:var(--fg); transition:transform .3s; transform:translateX(2rem); }
   html.light .toggle .knob { transform:translateX(0); }
 
-  /* ===== Particle Text Hero ===== */
-  #home { position:relative; z-index:10; min-height:100vh; background:#000;
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:80px 16px 60px; }
-  #particles { display:block; width:min(1000px, 94vw); height:auto; aspect-ratio:1000 / 500;
-    border:1px solid #1a1a1a; border-radius:14px; box-shadow:0 24px 70px rgba(0,0,0,.6); touch-action:none; }
-  .hero-caption { text-align:center; color:#9aa4b2; }
+  /* ===== Particle Text Hero (full screen) ===== */
+  #home { position:relative; z-index:10; height:100vh; min-height:560px; background:#000; overflow:hidden; }
+  #particles { position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+  .hero-caption { position:absolute; bottom:72px; left:0; right:0; z-index:5; text-align:center; color:#9aa4b2; padding:0 16px; pointer-events:none; }
   .hero-caption .role { font-family:'Fira Code',monospace; font-size:clamp(13px,1.8vw,16px); letter-spacing:2px; color:var(--accent); text-transform:uppercase; }
-  .hero-caption .hint { font-size:12px; margin-top:6px; color:#5a5a5a; }
+  .hero-caption .hint { font-size:12px; margin-top:6px; color:#6a6a6a; }
   .scroll { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); background:none; border:none;
-    cursor:pointer; color:#777; transition:color .3s; animation:bob 2s ease-in-out infinite; text-decoration:none; }
+    cursor:pointer; color:#888; transition:color .3s; animation:bob 2s ease-in-out infinite; text-decoration:none; z-index:5; }
   .scroll:hover { color:#fff; }
   @keyframes bob { 0%,100%{ transform:translateX(-50%) translateY(0);} 50%{ transform:translateX(-50%) translateY(6px);} }
 
@@ -285,10 +283,9 @@
     const canvas = document.getElementById('particles');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
     const words = ['ABDUR', 'ARSHAD', 'GAME DEV', 'UNITY · C#', 'AI · PYTHON'];
-    const pixelSteps = 6;
     const drawAsPoints = true;
+    let W = 0, H = 0, fontSize = 100, pixelSteps = 6, ptSize = 2;
 
     let particles = [];
     let frameCount = 0;
@@ -332,7 +329,7 @@
       };
       ctx.fillStyle = 'rgb(' + c.r + ',' + c.g + ',' + c.b + ')';
       if (drawAsPoints) {
-        ctx.fillRect(this.pos.x, this.pos.y, 2, 2);
+        ctx.fillRect(this.pos.x, this.pos.y, ptSize, ptSize);
       } else {
         ctx.beginPath(); ctx.arc(this.pos.x, this.pos.y, this.size / 2, 0, Math.PI * 2); ctx.fill();
       }
@@ -355,7 +352,7 @@
       off.width = W; off.height = H;
       const octx = off.getContext('2d');
       octx.fillStyle = 'white';
-      octx.font = 'bold 100px Arial';
+      octx.font = 'bold ' + fontSize + 'px Arial';
       octx.textAlign = 'center';
       octx.textBaseline = 'middle';
       octx.fillText(word, W / 2, H / 2);
@@ -425,8 +422,31 @@
     canvas.addEventListener('mousemove', toCanvas);
     canvas.addEventListener('contextmenu', e => e.preventDefault());
 
+    function resize() {
+      W = canvas.clientWidth || window.innerWidth;
+      H = canvas.clientHeight || window.innerHeight;
+      canvas.width = W; canvas.height = H;
+      let size = Math.floor(H * 0.34);
+      const probe = document.createElement('canvas').getContext('2d');
+      const maxW = W * 0.82;
+      let widest = 1;
+      probe.font = 'bold ' + size + 'px Arial';
+      for (const w of words) widest = Math.max(widest, probe.measureText(w).width);
+      if (widest > maxW) size = Math.max(36, Math.floor(size * maxW / widest));
+      fontSize = size;
+      pixelSteps = Math.max(4, Math.round(fontSize / 14));
+      ptSize = Math.max(2, Math.round(fontSize / 60));
+    }
+
+    resize();
     nextWord(words[0]);
     animate();
+
+    let rt;
+    window.addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => { resize(); nextWord(words[wordIndex]); }, 150);
+    });
   })();
 
   /* ---------- Reveal on scroll ---------- */
