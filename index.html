@@ -295,6 +295,7 @@
     let particles = [];
     let frameCount = 0;
     let wordIndex = 0;
+    let aligned = false, holdStart = 0;
     const mouse = { x: 0, y: 0, active: false };
 
     function randomPos(x, y, mag) {
@@ -441,7 +442,21 @@
         }
       }
       frameCount++;
-      if (frameCount % 440 === 0) { wordIndex = (wordIndex + 1) % words.length; nextWord(words[wordIndex]); }
+      // Hold the phrase for ~2s AFTER the particles have fully aligned into the text
+      if (!aligned) {
+        let settled = 0, live = 0;
+        for (const p of particles) {
+          if (p.isKilled) continue;
+          live++;
+          const dx = p.pos.x - p.target.x, dy = p.pos.y - p.target.y;
+          if (dx * dx + dy * dy < 64) settled++;
+        }
+        if (live > 0 && settled / live > 0.85) { aligned = true; holdStart = frameCount; }
+      } else if (frameCount - holdStart >= 120) {
+        wordIndex = (wordIndex + 1) % words.length;
+        nextWord(words[wordIndex]);
+        aligned = false;
+      }
       requestAnimationFrame(animate);
     }
 
@@ -480,7 +495,7 @@
     let rt;
     window.addEventListener('resize', () => {
       clearTimeout(rt);
-      rt = setTimeout(() => { resize(); nextWord(words[wordIndex]); }, 150);
+      rt = setTimeout(() => { resize(); nextWord(words[wordIndex]); aligned = false; }, 150);
     });
   })();
 
