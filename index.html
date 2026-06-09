@@ -170,8 +170,8 @@
   <section id="home">
     <canvas id="particles" width="1000" height="500" aria-label="Animated particle text spelling Abdur Arshad and roles"></canvas>
     <div class="hero-caption">
-      <div class="role">Game Developer · Unity · C# · AI</div>
-      <div class="hint">Right-click + drag on the canvas to scatter the particles · words cycle automatically</div>
+      <div class="role">VR / AR / Mixed Reality Developer</div>
+      <div class="hint">Move your cursor across the text to scatter the particles · lines cycle automatically</div>
     </div>
     <a class="scroll" href="#about" aria-label="Scroll down">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -283,14 +283,19 @@
     const canvas = document.getElementById('particles');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const words = ['ABDUR', 'ARSHAD', 'GAME DEV', 'UNITY · C#', 'AI · PYTHON'];
+    const words = [
+      "Hi, I'm Abdur",
+      'VR, AR & Mixed Reality Developer',
+      'Building Immersive Training Simulations',
+      'Unity 3D • Unreal • Meta Quest • Apple Vision Pro',
+    ];
     const drawAsPoints = true;
     let W = 0, H = 0, fontSize = 100, pixelSteps = 6, ptSize = 2;
 
     let particles = [];
     let frameCount = 0;
     let wordIndex = 0;
-    const mouse = { x: 0, y: 0, isPressed: false, isRightClick: false };
+    const mouse = { x: 0, y: 0, active: false };
 
     function randomPos(x, y, mag) {
       const rx = Math.random() * W, ry = Math.random() * H;
@@ -352,10 +357,32 @@
       off.width = W; off.height = H;
       const octx = off.getContext('2d');
       octx.fillStyle = 'white';
-      octx.font = 'bold ' + fontSize + 'px Arial';
       octx.textAlign = 'center';
       octx.textBaseline = 'middle';
-      octx.fillText(word, W / 2, H / 2);
+      // Auto-fit: scale font + word-wrap so the phrase fills the screen across multiple lines
+      const maxW = W * 0.86, maxH = H * 0.62;
+      const wrap = (text, mw) => {
+        const ws = text.split(' '); const ls = []; let cur = '';
+        for (const w of ws) {
+          const t = cur ? cur + ' ' + w : w;
+          if (octx.measureText(t).width > mw && cur) { ls.push(cur); cur = w; } else cur = t;
+        }
+        if (cur) ls.push(cur);
+        return ls;
+      };
+      let size = Math.floor(H * 0.26), lines = [word], lh = size;
+      for (; size >= 22; size -= 3) {
+        octx.font = 'bold ' + size + 'px Arial';
+        lines = wrap(word, maxW);
+        lh = size * 1.18;
+        if (lines.every(l => octx.measureText(l).width <= maxW) && lines.length * lh <= maxH) break;
+      }
+      fontSize = size;
+      pixelSteps = Math.max(5, Math.round(fontSize / 10));
+      ptSize = Math.max(2, Math.round(fontSize / 55));
+      octx.font = 'bold ' + fontSize + 'px Arial';
+      const startY = H / 2 - (lines.length * lh) / 2 + lh / 2;
+      lines.forEach((l, i) => octx.fillText(l, W / 2, startY + i * lh));
       const pixels = octx.getImageData(0, 0, W, H).data;
       const newColor = { r: Math.random() * 255, g: Math.random() * 255, b: Math.random() * 255 };
 
@@ -400,14 +427,21 @@
         p.move(); p.draw();
         if (p.isKilled && (p.pos.x < 0 || p.pos.x > W || p.pos.y < 0 || p.pos.y > H)) particles.splice(i, 1);
       }
-      if (mouse.isPressed && mouse.isRightClick) {
-        particles.forEach(p => {
-          const d = Math.sqrt((p.pos.x - mouse.x) ** 2 + (p.pos.y - mouse.y) ** 2);
-          if (d < 50) p.kill();
-        });
+      // Scatter particles near the cursor on hover (no click needed); they settle back via move()
+      if (mouse.active) {
+        const R = 95;
+        for (const p of particles) {
+          const dx = p.pos.x - mouse.x, dy = p.pos.y - mouse.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d > 0.001 && d < R) {
+            const force = (1 - d / R) * 16;
+            p.pos.x += (dx / d) * force;
+            p.pos.y += (dy / d) * force;
+          }
+        }
       }
       frameCount++;
-      if (frameCount % 240 === 0) { wordIndex = (wordIndex + 1) % words.length; nextWord(words[wordIndex]); }
+      if (frameCount % 320 === 0) { wordIndex = (wordIndex + 1) % words.length; nextWord(words[wordIndex]); }
       requestAnimationFrame(animate);
     }
 
@@ -416,11 +450,12 @@
       const rect = canvas.getBoundingClientRect();
       mouse.x = (e.clientX - rect.left) * (W / rect.width);
       mouse.y = (e.clientY - rect.top) * (H / rect.height);
+      mouse.active = true;
     }
-    canvas.addEventListener('mousedown', e => { mouse.isPressed = true; mouse.isRightClick = e.button === 2; toCanvas(e); });
-    canvas.addEventListener('mouseup', () => { mouse.isPressed = false; mouse.isRightClick = false; });
     canvas.addEventListener('mousemove', toCanvas);
-    canvas.addEventListener('contextmenu', e => e.preventDefault());
+    canvas.addEventListener('mouseleave', () => { mouse.active = false; });
+    canvas.addEventListener('touchmove', e => { if (e.touches[0]) toCanvas(e.touches[0]); }, { passive: true });
+    canvas.addEventListener('touchend', () => { mouse.active = false; });
 
     function resize() {
       W = canvas.clientWidth || window.innerWidth;
